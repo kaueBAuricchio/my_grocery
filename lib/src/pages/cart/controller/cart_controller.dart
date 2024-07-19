@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_grocery/src/models/cart_item_model.dart';
 import 'package:my_grocery/src/models/item_model.dart';
+import 'package:my_grocery/src/models/order_model.dart';
 import 'package:my_grocery/src/pages/auth/controller/auth_controller.dart';
 import 'package:my_grocery/src/pages/cart/repository/cart_repository.dart';
 import 'package:my_grocery/src/pages/cart/result/cart_result.dart';
+import 'package:my_grocery/src/pages/common_widget/payment_dialog.dart';
 import 'package:my_grocery/src/services/utils_services.dart';
 
 class CartController extends GetxController {
@@ -97,5 +100,20 @@ class CartController extends GetxController {
           isError: true);
     }
     return result;
+  }
+
+  Future checkoutCart() async {
+    CartResult<OrderModel> result = await cartRepository.checkoutCart(
+        token: authController.userModel.token!, total: cartPriceTotal());
+
+    result.when(success: (order) {
+      showDialog(
+          context: Get.context!,
+          builder: (_) {
+            return PaymentDialog(order: order);
+          });
+    }, error: (message) {
+      utilsServices.showToast(message: 'Pedido não confirmado');
+    });
   }
 }

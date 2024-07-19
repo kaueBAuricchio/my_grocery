@@ -16,6 +16,7 @@ class CartTab extends StatefulWidget {
 
 class _CartTabState extends State<CartTab> {
   final UtilsServices utilsServices = UtilsServices();
+  final CartController cartController = Get.find<CartController>();
 
   double cartTotalPrice() {
     // double total = 0;
@@ -105,15 +106,7 @@ class _CartTabState extends State<CartTab> {
                       onPressed: () async {
                         bool? result = await showOrderConfirmation();
                         if (result ?? false) {
-                          showDialog(
-                              context: context,
-                              builder: (_) {
-                                return PaymentDialog(
-                                    order: appData.orders.first);
-                              });
-                        } else {
-                          utilsServices.showToast(
-                              message: "Pedido nãp confirmado", isError: true);
+                          cartController.checkoutCart();
                         }
                       },
                       child: const Text('Concluir pedido',
