@@ -3,9 +3,7 @@ import 'package:get/get.dart';
 import 'package:my_grocery/src/config/custom_colors.dart';
 import 'package:my_grocery/src/pages/cart/components/cart_tile.dart';
 import 'package:my_grocery/src/pages/cart/controller/cart_controller.dart';
-import 'package:my_grocery/src/pages/common_widget/payment_dialog.dart';
 import 'package:my_grocery/src/services/utils_services.dart';
-import 'package:my_grocery/src/models/app_data.dart' as appData;
 
 class CartTab extends StatefulWidget {
   const CartTab({Key? key}) : super(key: key);
