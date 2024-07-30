@@ -4,8 +4,7 @@ import 'package:my_grocery/src/services/utils_services.dart';
 
 class OrderItemWidget extends StatelessWidget {
   const OrderItemWidget(
-      {Key? key, required this.utilsServices, required this.orderItem})
-      : super(key: key);
+      {super.key, required this.utilsServices, required this.orderItem});
 
   final UtilsServices utilsServices;
   final CartItemModel orderItem;

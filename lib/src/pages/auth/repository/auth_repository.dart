@@ -1,7 +1,7 @@
 import 'package:my_grocery/src/constants/endpoints.dart';
 import 'package:my_grocery/src/models/user_model.dart';
 import 'package:my_grocery/src/pages/auth/result/auth_errors.dart'
-    as authErrors;
+    as auth_errors;
 import 'package:my_grocery/src/pages/auth/result/auth_result.dart';
 import 'package:my_grocery/src/services/http_manager.dart';
 
@@ -14,7 +14,7 @@ class AuthRepository {
 
       return AuthResult.success(user);
     } else {
-      return AuthResult.error(authErrors.authErrorsString(result['error']));
+      return AuthResult.error(auth_errors.authErrorsString(result['error']));
     }
   }
 
@@ -50,5 +50,25 @@ class AuthRepository {
         url: Endpoints.resetPassword,
         method: HttpMethods.post,
         body: {'email': email});
+  }
+
+  Future<bool> changePassword(
+      {required String token,
+      required String email,
+      required String currentPassword,
+      required String newPassword}) async {
+    final result = await _httpManager.restRequest(
+        url: Endpoints.changePassword,
+        method: HttpMethods.post,
+        headers: {
+          'X-Parse-Session-Token': token
+        },
+        body: {
+          'email': email,
+          'currentPassword': currentPassword,
+          'newPassword': newPassword
+        });
+
+    return result['error'] == null;
   }
 }

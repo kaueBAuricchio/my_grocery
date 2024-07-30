@@ -1,11 +1,11 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:my_grocery/src/config/custom_colors.dart';
 import 'package:my_grocery/src/models/order_model.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 import 'package:my_grocery/src/services/utils_services.dart';
 
 class PaymentDialog extends StatelessWidget {
-  PaymentDialog({Key? key, required this.order}) : super(key: key);
+  PaymentDialog({super.key, required this.order});
 
   final OrderModel order;
   final UtilsServices utilsServices = UtilsServices();
@@ -43,10 +43,10 @@ class PaymentDialog extends StatelessWidget {
                     ),
                   ),
                   //Qr Code
-                  QrImageView(
-                    data: "1234567890",
-                    version: QrVersions.auto,
-                    size: 200.0,
+                  Image.memory(
+                    utilsServices.decodeQrCodeImage(order.qrCodeImage),
+                    height: 200,
+                    width: 200,
                   ),
                   //maturity
                   Text(
@@ -67,7 +67,10 @@ class PaymentDialog extends StatelessWidget {
                           side: BorderSide(
                               width: 2,
                               color: CustomColors.customSwatchColor.shade300)),
-                      onPressed: () {},
+                      onPressed: () {
+                        FlutterClipboard.copy(order.copyAndPaste);
+                        utilsServices.showToast(message: 'Codigo Copiado');
+                      },
                       icon: const Icon(Icons.copy, size: 15),
                       label: const Text(
                         'Copiar codigo Pix',

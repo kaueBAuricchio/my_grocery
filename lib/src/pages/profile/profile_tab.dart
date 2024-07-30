@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:my_grocery/src/config/custom_colors.dart';
 import 'package:my_grocery/src/pages/auth/controller/auth_controller.dart';
 import 'package:my_grocery/src/pages/common_widget/custom_text_field.dart';
-import 'package:my_grocery/src/models/app_data.dart' as appData;
+import 'package:my_grocery/src/services/validators.dart';
 
 class ProfileTab extends StatefulWidget {
-  ProfileTab({Key? key}) : super(key: key);
+  const ProfileTab({super.key});
 
   @override
   State<ProfileTab> createState() => _ProfileTabState();
@@ -36,21 +36,21 @@ class _ProfileTabState extends State<ProfileTab> {
           CustomTextField(
             icon: Icons.email,
             label: 'Email',
-            initialValue: appData.user.email,
+            initialValue: authController.userModel.email,
             readOnly: true,
           ),
           //Name
           CustomTextField(
             icon: Icons.person,
             label: 'Nome',
-            initialValue: appData.user.name,
+            initialValue: authController.userModel.name,
             readOnly: true,
           ),
           //Phone
           CustomTextField(
             icon: Icons.phone,
             label: 'Celular',
-            initialValue: appData.user.cellphone,
+            initialValue: authController.userModel.cellphone,
             readOnly: true,
           ),
           //CPF
@@ -58,7 +58,7 @@ class _ProfileTabState extends State<ProfileTab> {
             icon: Icons.file_copy,
             label: 'CPF',
             obscurePass: true,
-            initialValue: appData.user.cpf,
+            initialValue: authController.userModel.cpf,
             readOnly: true,
           ),
           //Buttom refresh password
@@ -81,6 +81,10 @@ class _ProfileTabState extends State<ProfileTab> {
 
   //Dialog new password
   Future<bool?> updatePassword() {
+    final newPasswordController = TextEditingController();
+    final currentPasswordController = TextEditingController();
+    final _formKey = GlobalKey<FormState>();
+
     return showDialog(
         context: context,
         builder: (context) {
@@ -92,52 +96,84 @@ class _ProfileTabState extends State<ProfileTab> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      //Title
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        child: Text(
-                          'Atualizar senha',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        //Title
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            'Atualizar senha',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      //Current Password
-                      CustomTextField(
-                        icon: Icons.lock,
-                        label: 'Senha atual',
-                        initialValue: appData.user.pass,
-                        obscurePass: true,
-                      ),
-                      //New Password
-                      const CustomTextField(
-                        icon: Icons.lock_outline,
-                        label: 'Nova senha',
-                        obscurePass: true,
-                      ),
-                      //Confirm Password
-                      const CustomTextField(
-                        icon: Icons.lock_outline,
-                        label: 'Confirmar senha ',
-                        obscurePass: true,
-                      ),
-                      //Button change password
-                      SizedBox(
-                        height: 45,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20))),
-                            onPressed: () {},
-                            child: const Text('Atualizar senha')),
-                      )
-                    ],
+                        //Current Password
+                        CustomTextField(
+                          controller: currentPasswordController,
+                          icon: Icons.lock,
+                          label: 'Senha atual',
+                          initialValue: authController.userModel.pass,
+                          obscurePass: true,
+                          validator: passValidator,
+                        ),
+                        //New Password
+                        CustomTextField(
+                          controller: newPasswordController,
+                          icon: Icons.lock_outline,
+                          label: 'Nova senha',
+                          obscurePass: true,
+                          validator: passValidator,
+                        ),
+                        //Confirm Password
+                        CustomTextField(
+                          icon: Icons.lock_outline,
+                          label: 'Confirmar senha ',
+                          obscurePass: true,
+                          validator: (password) {
+                            final result = passValidator(password);
+
+                            if (result != null) {
+                              return result;
+                            }
+
+                            if (password != newPasswordController.text) {
+                              return 'As senhas não são equivalentes';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        //Button change password
+                        SizedBox(
+                          height: 45,
+                          child: Obx(() => ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20))),
+                              onPressed: authController.isLoading.value
+                                  ? null
+                                  : () {
+                                      if (_formKey.currentState!.validate()) {
+                                        authController.changePassword(
+                                            currentPassword:
+                                                currentPasswordController.text,
+                                            newPassword:
+                                                newPasswordController.text);
+                                      }
+                                    },
+                              child: authController.isLoading.value
+                                  ? const CircularProgressIndicator()
+                                  : const Text('Atualizar senha'))),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(

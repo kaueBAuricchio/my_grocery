@@ -95,20 +95,32 @@ class _CartTabState extends State<CartTab> {
                 //Button confirm order
                 SizedBox(
                   height: 50,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              CustomColors.customSwatchColor.shade800,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18))),
-                      onPressed: () async {
-                        bool? result = await showOrderConfirmation();
-                        if (result ?? false) {
-                          cartController.checkoutCart();
-                        }
-                      },
-                      child: const Text('Concluir pedido',
-                          style: TextStyle(fontSize: 18))),
+                  child: GetBuilder<CartController>(
+                    builder: (controller) {
+                      return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  CustomColors.customSwatchColor.shade800,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18))),
+                          onPressed: (controller.isLoading ||
+                                  controller.cartItems.isEmpty)
+                              ? null
+                              : () async {
+                                  bool? result = await showOrderConfirmation();
+                                  if (result ?? false) {
+                                    cartController.checkoutCart();
+                                  } else {
+                                    utilsServices.showToast(
+                                        message: 'Pedido não Confirmado');
+                                  }
+                                },
+                          child: controller.isLoading
+                              ? const CircularProgressIndicator()
+                              : const Text('Concluir pedido',
+                                  style: TextStyle(fontSize: 18)));
+                    },
+                  ),
                 )
               ],
             ),

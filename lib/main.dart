@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:my_grocery/src/pages/auth/controller/auth_controller.dart';
 import 'package:my_grocery/src/routes/app_pages.dart';
@@ -8,7 +9,11 @@ void main() {
 
   Get.put(AuthController());
 
-  runApp(const MyApp());
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]).then((_) {
+    runApp(const MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {

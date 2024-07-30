@@ -5,6 +5,7 @@ import 'package:my_grocery/src/pages/base/base_screen.dart';
 import 'package:my_grocery/src/pages/base/binding/base_binding.dart';
 import 'package:my_grocery/src/pages/cart/binding/cart_binding.dart';
 import 'package:my_grocery/src/pages/home/binding/home_binding.dart';
+import 'package:my_grocery/src/pages/orders/bindings/orders_binding.dart';
 import 'package:my_grocery/src/pages/product/product_screen.dart';
 import 'package:my_grocery/src/pages/splash/splash_screen.dart';
 
@@ -16,7 +17,12 @@ abstract class AppPages {
     GetPage(
         name: PagesRoutes.baseRoute,
         page: () => const BaseScreen(),
-        bindings: [HomeBinding(), BaseBinding(), CartBinding()]),
+        bindings: [
+          HomeBinding(),
+          BaseBinding(),
+          CartBinding(),
+          OrdersBinding()
+        ]),
     GetPage(name: PagesRoutes.productRoute, page: () => ProductScreen())
   ];
 }

@@ -6,7 +6,7 @@ import 'package:my_grocery/src/pages/cart/view/cart_tab.dart';
 import 'package:my_grocery/src/pages/home/view/home_tab.dart';
 import 'package:my_grocery/src/pages/profile/profile_tab.dart';
 
-import '../orders/orders_tab.dart';
+import '../orders/view/orders_tab.dart';
 
 class BaseScreen extends StatefulWidget {
   const BaseScreen({super.key});
